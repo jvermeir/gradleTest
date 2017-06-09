@@ -5,7 +5,7 @@ version = '1.0'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Gradle Quickstart',
-                   'Implementation-Version': version
+                'Implementation-Version': version
     }
 }
 
@@ -24,8 +24,29 @@ test {
 
 uploadArchives {
     repositories {
-       flatDir {
-           dirs 'repos'
-       }
+        flatDir {
+            dirs 'repos'
+        }
     }
+}
+
+task cmdLine(type: Exec) {
+    doFirst {
+        new File("bin").mkdirs()
+        workingDir 'bin'
+        commandLine 'sh', '-c', 'curl http://repo1.maven.org/maven2/com/github/tomakehurst/wiremock-standalone/2.6.0/wiremock-standalone-2.6.0.jar -O'
+    }
+}
+
+task listFile() {
+    doFirst {
+        new File("bin").eachFile() { file ->
+            println file.getName()
+        }
+    }
+}
+
+task all() {
+    dependsOn tasks.cmdLine
+    dependsOn tasks.listFile
 }
